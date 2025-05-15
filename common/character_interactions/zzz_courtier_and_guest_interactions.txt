@@ -993,6 +993,13 @@
 		}
 	}
 
+	# Hiraeth compatibility
+    modifier = {
+		scope:actor = { dynasty = { has_dynasty_perk = hth_erudition_legacy_1 } }
+		add = 40
+		desc = HTH_DYNASTY_PERK
+    }
+
 	auto_accept = {
 		custom_description = {
 			text = "spending_hook"
