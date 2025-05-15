@@ -1,0 +1,32 @@
+﻿l_english:
+
+  # Interaction
+  itcp_invalid_bribe_against_loyal_desc: "You #bold cannot#! make an offer to [recipient.GetFirstName] because [recipient.GetSheHe] is [GetTrait('loyal').GetName(GetNullCharacter)] to [recipient.GetHersHis] [liege]"
+  itcc_make_an_offer: "@gold_icon! Make an offer"
+  itcc_making_an_offer_desc: "[recipient.GetSheHe|U] is receiving an offer: $VALUE|=+0$"
+
+  # Opinion modifiers
+  itcc_poached_courtier_poacher_opinion: "Poached valuable courtier from me"
+  itcc_poached_courtier_poached_opinion: "Betrayed me for another liege"
+
+  # AI Acceptance modifiers
+  itcc_ai_is_guest_lowborn_desc: "#V [recipient.GetFirstName]#! is a [lowborn|E] [guest|E]: $VALUE|=+0$"
+  itcc_ai_is_low_courtier_lowborn_desc: "#V [recipient.GetFirstName]#! is a [lowborn|E], [low_courtier|E]: $VALUE|=+0$"
+  itcc_ai_is_wandering_highborn_desc: "#V [recipient.GetFirstName]#! is a wandering [highborn|e]: $VALUE|=+0$"
+  itcc_ai_is_guest_highborn_desc: "#V [recipient.GetFirstName]#! is a [highborn|E] [guest|E]: $VALUE|=+0$"
+  itcc_ai_is_low_courtier_highborn_desc: "#V [recipient.GetFirstName]#! is a [highborn|E], [low_courtier|E]: $VALUE|=+0$"
+  itcc_ai_is_disloyal_courtier_desc: "#V [recipient.GetFirstName]#! is Disloyal to their [liege|E]: $VALUE|=+0$"
+  itcc_ai_is_loyal_courtier_desc: "#V [recipient.GetFirstName]#! is Loyal to their [liege|E]: $VALUE|=+0$"
+  itcc_ai_is_content_courtier_desc: "#V [recipient.GetFirstName]#! is content with service to their [liege|E]: $VALUE|=+0$"
+  itcc_actor_is_landless_desc: "You are just a landless adventurer: $VALUE|=+0$"
+  itcc_actor_is_murderer_desc: "You are a known [GetTrait('murderer').GetName(GetNullCharacter)]: $VALUE|=+0$"
+  itcc_actor_is_cannibal_desc: "You are a known [GetTrait('cannibal').GetName(GetNullCharacter)]: $VALUE|=+0$"
+
+  # Concepts
+  ## Low Courtier
+  game_concept_low_courtier: "Low Courtier"
+  game_concept_low_courtier_desc: "A Low Courtier is someone who belongs to a [court|E] but is not assigned to any specific duty, such as a [councillor|E] or a [court_position|E]. Low Courtiers are often eager to seize opportunities, especially when presented with a favorable bargain."
+
+  ## Highborn
+  game_concept_highborn: "Highborn"
+  game_concept_highborn_desc: "A Highborn is a member of a [dynasty|E]."

@@ -54,6 +54,25 @@
 		localization = COVER_TRAVEL_EXPENSES
 	}
 
+    # Pay money to entice
+    send_option = {
+		is_valid = {
+			custom_tooltip = {
+				text = itcp_invalid_bribe_against_loyal_desc
+				exists = scope:recipient
+				scope:recipient = {
+					NAND = {
+						is_courtier = yes
+						has_trait = loyal
+					}
+				}
+			}
+		}
+
+		flag = itcc_making_an_offer
+		localization = itcc_make_an_offer
+	}
+
     send_option = {
 		is_shown = {
 			exists = scope:recipient
@@ -113,13 +132,17 @@
 	}
 
 	on_accept = {
-
 		hidden_effect = {
 			scope:recipient = {
 				set_variable = {
 					name = invite_to_court_cooldown
 					years = 5
 				}
+
+                set_variable = {
+                    name = itcp_bribe_multiplier_value
+                    value = 1.0
+                }
 			}		
 		
 			if = {
@@ -165,6 +188,130 @@
 			}
 		}
 
+        # If the poached courtier is important additional things might happen
+        scope:recipient = {
+            if = {
+                limit = {
+                    OR = {
+                        is_councillor = yes
+                        is_commanding_army = yes
+                        is_knight = yes
+                        has_any_court_position = yes
+                    }
+                }
+                
+                # If employed at court but is willing to be poached, has a chance to gain Disloyal
+                if = {
+                    limit = { NOT = { has_trait = disloyal } }
+                    random_list = {
+                        95 = { }
+                        5 = { add_trait = disloyal }
+                    }
+                }
+                
+                # The former liege of the poached courtier will not be pleased. 
+                # Will be even more mad if the poacher is lower rank or landless
+                scope:recipient.liege = {
+                    set_variable = {
+                        name = itcc_poached_courtier_opinion_modifier
+                        value = -20
+                    }
+                    
+                    if = {
+                        limit = {
+                            OR = {
+                                scope:actor = { is_landless_adventurer = yes }
+                                tier_difference = {
+                                    target = scope:actor
+                                    value < 0
+                                }
+                            }
+                        }
+                        
+                        change_variable = {
+                            name = itcc_poached_courtier_opinion_modifier
+                            multiply = 2
+                        }
+                    }
+                    
+                    add_opinion = {
+                        target = scope:recipient
+                        opinion = var:itcc_poached_courtier_opinion_modifier
+                        modifier = itcc_poached_courtier_poached_opinion
+                    }
+                    
+                    add_opinion = {
+                        target = scope:actor
+                        opinion = var:itcc_poached_courtier_opinion_modifier
+                        modifier = itcc_poached_courtier_poacher_opinion
+                    }
+                }
+            }
+        }
+
+        if = {
+            limit = { always = scope:itcc_making_an_offer }
+
+            # I decided to make the gold scale between 1.25*base and 2.5*base 
+            # depending on the importance of the position
+            scope:recipient = {
+
+                # Councillor = 2.5 the price
+                if = {
+                    limit = { is_councillor = yes }
+                    set_variable = { name = itcp_bribe_multiplier value = 2.5 }
+                }
+
+                # Commander = 2.0 the price
+                else_if = {
+                    limit = { is_commanding_army = yes }
+                    set_variable = { name = itcp_bribe_multiplier value = 2.0 }
+                }
+
+                # Knight or Court Position that is not Jester or Stooge = 1.5 the price
+                else_if = {
+                    limit = {
+                        OR = {
+                            is_knight = yes
+                            AND = {
+                                has_any_court_position = yes
+                                NOR = {
+                                    has_court_position = court_jester_court_position
+                                    has_court_position = stooge_camp_officer
+                                }
+                            }
+                        }
+                    }
+                    set_variable = { name = itcp_bribe_multiplier value = 1.5 }
+                }
+
+                # Stooge/Jester = 1.25 the price
+                else_if = {
+                    limit = {
+                        OR = {
+                            has_court_position = court_jester_court_position
+                            has_court_position = stooge_camp_officer
+                        }
+                    }
+                    set_variable = { name = itcp_bribe_multiplier value = 1.25 }
+                }
+
+                scope:actor = {
+                    pay_short_term_gold = {
+                        gold = {
+                            value = bribe_value
+                            multiply = scope:recipient.var:itcp_bribe_multiplier
+                        }
+                        target = scope:recipient
+                    }
+
+                    stress_impact = {
+                        greedy = medium_stress_impact_gain
+                    }
+                }
+            }
+        }
+
         if = {
             limit = { always = scope:cover_travel_expenses }
             scope:actor = {
@@ -179,22 +326,6 @@
                     greedy = minor_stress_impact_gain
                 }
             }
-        }
-
-        if = {
-            limit = { always = scope:pay_to_recruit }
-            scope:actor = {
-				pay_short_term_gold = {
-					gold = {
-						value = bribe_value
-						multiply = 1.5
-					}
-					target = scope:recipient
-				}
-				stress_impact = {
-					greedy = minor_stress_impact_gain
-				}
-			}
         }
 
         if = {
@@ -518,26 +649,7 @@
 			desc = AI_TRAVEL_EXPENSES
 		}
 
-        # Less likely to care about money if generous, more likely if greedy
-
-        modifier = {
-            add = {
-                value = 50
-                if = {
-                    limit = { has_trait = greedy }
-                    multiply = 1.5
-                }
-                else_if = {
-                    limit = { has_trait = generous }
-                    multiply = 0.5
-                }
-            }
-            scope:pay_to_recruit = yes
-            desc = SCHEME_WITH_GIFT_SIGNIFICANT
-        }
-
         # Less likely to care about prestige if humble, more likely if arrogant
-
         modifier = {
             add = {
                 value = 20
@@ -714,6 +826,140 @@
  			add = -200
  			desc = cid_1010_no_invite_var_desc
  		}
+
+        # ITCC Modifiers
+
+        ## Guest lowborn
+		modifier = {
+			is_lowborn = yes
+			is_courtier = no
+			is_foreign_court_or_pool_guest = yes
+
+			add = 30
+			desc = itcc_ai_is_guest_lowborn_desc
+		}
+
+        ## Low courtier lowborn
+        modifier = {
+            is_lowborn = yes
+			is_courtier = yes
+			is_foreign_court_or_pool_guest = no
+            is_knight = no
+			is_councillor = no
+			is_commanding_army = no
+			has_any_court_position = no
+
+			add = 15
+			desc = itcc_ai_is_low_courtier_lowborn_desc
+        }
+
+        ## Wandering highborn invited by landed noble
+        modifier = {
+			is_lowborn = no
+			is_courtier = no
+			is_foreign_court_or_pool_guest = no
+            scope:actor = {
+                is_landless_adventurer = no
+            }
+
+			add = 20
+			desc = itcc_ai_is_wandering_highborn_desc
+		}
+
+        ## Guest Highborn invited by landed noble
+		modifier = {
+			is_lowborn = no
+			is_courtier = no
+			is_foreign_court_or_pool_guest = yes
+            scope:actor = {
+                is_landless_adventurer = no
+            }
+
+			add = 15
+			desc = itcc_ai_is_guest_highborn_desc
+		}
+
+        ## Low courtier highborn invited by landed noble
+        modifier = {
+            is_lowborn = no
+			is_courtier = yes
+			is_foreign_court_or_pool_guest = no
+			is_knight = no
+			is_councillor = no
+			is_commanding_army = no
+            scope:actor = {
+                is_landless_adventurer = no
+            }
+
+            add = 10
+            desc = itcc_ai_is_low_courtier_highborn_desc
+        }
+
+        # Disloyal Courtier
+		modifier = {
+			is_courtier = yes
+			has_trait = disloyal
+
+			add = 20
+			desc = itcc_ai_is_disloyal_courtier_desc
+		}
+
+        # Loyal Courtier
+		modifier = {
+			is_courtier = yes
+			has_trait = loyal
+
+			add = -40
+			desc = itcc_ai_is_loyal_courtier_desc
+		}
+
+        # Content Courtier
+        modifier = {
+            is_courtier = yes
+            has_trait = content
+
+            add = -30
+            desc = itcc_ai_is_content_courtier_desc
+        }
+
+        # Actor is landless
+        modifier = {
+            scope:actor = { is_landless_adventurer = yes }
+            add = -10
+            desc = itcc_actor_is_landless_desc
+        }
+
+        # Actor is murderer
+		modifier = {
+			scope:actor = { has_trait = murderer }
+			add = -15
+			desc = itcc_actor_is_murderer_desc
+		}
+
+        # Actor is a cannibal
+        modifier = {
+			scope:actor = { has_trait = cannibal }
+			add = -50
+			desc = itcc_actor_is_cannibal_desc
+		}
+
+        # Making an offer
+		modifier = {
+			add = {
+				value = 20
+
+				if = {
+					limit = { has_trait = greedy }
+					multiply = 1.5
+				} else_if = {
+					limit = { has_trait = generous }
+					multiply = 0.5
+				}
+			}
+
+			scope:itcc_making_an_offer = yes
+			desc = itcc_making_an_offer_desc
+		}
 	}
 
 	auto_accept = {
