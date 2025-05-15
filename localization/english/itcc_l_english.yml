@@ -1,9 +1,9 @@
 ﻿l_english:
 
   # Interaction
-  itcp_invalid_bribe_against_loyal_desc: "You #bold cannot#! make an offer to [recipient.GetFirstName] because [recipient.GetSheHe] is [GetTrait('loyal').GetName(GetNullCharacter)] to [recipient.GetHersHis] [liege]"
-  itcc_make_an_offer: "@gold_icon! Make an offer"
-  itcc_making_an_offer_desc: "[recipient.GetSheHe|U] is receiving an offer: $VALUE|=+0$"
+  itcp_invalid_bribe_against_loyal_desc: "You #bold cannot#! bribe [recipient.GetFirstName] because [recipient.GetSheHe] is [GetTrait('loyal').GetName(GetNullCharacter)] to [recipient.GetHerHis] [liege]"
+  itcc_make_an_offer: "@gold_icon! Make a lucrative offer"
+  itcc_making_an_offer_desc: "[recipient.GetSheHe|U] is receiving a lucrative offer: $VALUE|=+0$"
 
   # Opinion modifiers
   itcc_poached_courtier_poacher_opinion: "Poached valuable courtier from me"
@@ -12,13 +12,14 @@
   # AI Acceptance modifiers
   itcc_ai_is_guest_lowborn_desc: "#V [recipient.GetFirstName]#! is a [lowborn|E] [guest|E]: $VALUE|=+0$"
   itcc_ai_is_low_courtier_lowborn_desc: "#V [recipient.GetFirstName]#! is a [lowborn|E], [low_courtier|E]: $VALUE|=+0$"
-  itcc_ai_is_wandering_highborn_desc: "#V [recipient.GetFirstName]#! is a wandering [highborn|e]: $VALUE|=+0$"
-  itcc_ai_is_guest_highborn_desc: "#V [recipient.GetFirstName]#! is a [highborn|E] [guest|E]: $VALUE|=+0$"
-  itcc_ai_is_low_courtier_highborn_desc: "#V [recipient.GetFirstName]#! is a [highborn|E], [low_courtier|E]: $VALUE|=+0$"
-  itcc_ai_is_disloyal_courtier_desc: "#V [recipient.GetFirstName]#! is Disloyal to their [liege|E]: $VALUE|=+0$"
-  itcc_ai_is_loyal_courtier_desc: "#V [recipient.GetFirstName]#! is Loyal to their [liege|E]: $VALUE|=+0$"
-  itcc_ai_is_content_courtier_desc: "#V [recipient.GetFirstName]#! is content with service to their [liege|E]: $VALUE|=+0$"
-  itcc_actor_is_landless_desc: "You are just a landless adventurer: $VALUE|=+0$"
+  itcc_ai_is_wandering_highborn_desc: "#V [recipient.GetFirstName]#! is a wandering [highborn|e] being invited to noble court: $VALUE|=+0$"
+  itcc_ai_is_guest_highborn_desc: "#V [recipient.GetFirstName]#! is a [highborn|E] [guest|E] being invited to noble court: $VALUE|=+0$"
+  itcc_ai_is_low_courtier_highborn_desc: "#V [recipient.GetFirstName]#! is a [highborn|E], [low_courtier|E] being invited to noble court: $VALUE|=+0$"
+  itcc_ai_is_disloyal_courtier_desc: "#V [recipient.GetFirstName]#! is [GetTrait('disloyal').GetName(GetNullCharacter)]: $VALUE|=+0$"
+  itcc_ai_is_loyal_courtier_desc: "#V [recipient.GetFirstName]#! is [GetTrait('loyal').GetName(GetNullCharacter)] to [recipient.GetHerHis] [liege|E]: $VALUE|=+0$"
+  itcc_ai_is_content_courtier_desc: "#V [recipient.GetFirstName]#! is [GetTrait('content').GetName(GetNullCharacter)] to serve [recipient.GetHerHis] [liege|E]: $VALUE|=+0$"
+  itcc_ai_is_ambitious_courtier_going_up_desc: "#V [recipient.GetFirstName]#! is [GetTrait('ambitious').GetName(GetNullCharacter)] to serve a mightier lord"
+  itcc_ai_is_ambitious_courtier_going_down_desc: "#V [recipient.GetFirstName]#! is too [GetTrait('ambitious').GetName(GetNullCharacter)] to serve a lesser lord"
   itcc_actor_is_murderer_desc: "You are a known [GetTrait('murderer').GetName(GetNullCharacter)]: $VALUE|=+0$"
   itcc_actor_is_cannibal_desc: "You are a known [GetTrait('cannibal').GetName(GetNullCharacter)]: $VALUE|=+0$"
 

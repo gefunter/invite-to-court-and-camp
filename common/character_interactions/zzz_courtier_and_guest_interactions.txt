@@ -77,14 +77,6 @@
 		is_shown = {
 			exists = scope:recipient
 		}
-		flag = pay_to_recruit
-		localization = SCHEME_AGENT_GOLD
-	}
-
-    send_option = {
-		is_shown = {
-			exists = scope:recipient
-		}
 		flag = prestige_to_recruit
 		localization = SCHEME_AGENT_PRESTIGE
 	}
@@ -138,11 +130,6 @@
 					name = invite_to_court_cooldown
 					years = 5
 				}
-
-                set_variable = {
-                    name = itcp_bribe_multiplier_value
-                    value = 1.0
-                }
 			}		
 		
 			if = {
@@ -212,39 +199,39 @@
                 # The former liege of the poached courtier will not be pleased. 
                 # Will be even more mad if the poacher is lower rank or landless
                 scope:recipient.liege = {
-                    set_variable = {
-                        name = itcc_poached_courtier_opinion_modifier
-                        value = -20
-                    }
-                    
                     if = {
                         limit = {
                             OR = {
                                 scope:actor = { is_landless_adventurer = yes }
                                 tier_difference = {
                                     target = scope:actor
-                                    value < 0
+                                    value > 0
                                 }
                             }
+                        } 
+                        add_opinion = {
+                            target = scope:recipient
+                            opinion = -30
+                            modifier = itcc_poached_courtier_poached_opinion
                         }
-                        
-                        change_variable = {
-                            name = itcc_poached_courtier_opinion_modifier
-                            multiply = 2
+                        add_opinion = {
+                            target = scope:actor
+                            opinion = -30
+                            modifier = itcc_poached_courtier_poacher_opinion
                         }
                     }
-                    
-                    add_opinion = {
-                        target = scope:recipient
-                        opinion = var:itcc_poached_courtier_opinion_modifier
-                        modifier = itcc_poached_courtier_poached_opinion
-                    }
-                    
-                    add_opinion = {
-                        target = scope:actor
-                        opinion = var:itcc_poached_courtier_opinion_modifier
-                        modifier = itcc_poached_courtier_poacher_opinion
-                    }
+                    else = {
+                        add_opinion = {
+                            target = scope:recipient
+                            opinion = -20
+                            modifier = itcc_poached_courtier_poached_opinion
+                        }
+                        add_opinion = {
+                            target = scope:actor
+                            opinion = -20
+                            modifier = itcc_poached_courtier_poacher_opinion
+                        }
+                    } 
                 }
             }
         }
@@ -259,13 +246,37 @@
                 # Councillor = 2.5 the price
                 if = {
                     limit = { is_councillor = yes }
-                    set_variable = { name = itcp_bribe_multiplier value = 2.5 }
+                    scope:actor = {
+                        pay_short_term_gold = {
+                            gold = {
+                                value = bribe_value
+                                multiply = 2.5
+                            }
+                            target = scope:recipient
+                        }
+
+                        stress_impact = {
+                            greedy = medium_stress_impact_gain
+                        }
+                    }
                 }
 
                 # Commander = 2.0 the price
                 else_if = {
                     limit = { is_commanding_army = yes }
-                    set_variable = { name = itcp_bribe_multiplier value = 2.0 }
+                    scope:actor = {
+                        pay_short_term_gold = {
+                            gold = {
+                                value = bribe_value
+                                multiply = 2.0
+                            }
+                            target = scope:recipient
+                        }
+
+                        stress_impact = {
+                            greedy = medium_stress_impact_gain
+                        }
+                    }
                 }
 
                 # Knight or Court Position that is not Jester or Stooge = 1.5 the price
@@ -282,7 +293,19 @@
                             }
                         }
                     }
-                    set_variable = { name = itcp_bribe_multiplier value = 1.5 }
+                    scope:actor = {
+                        pay_short_term_gold = {
+                            gold = {
+                                value = bribe_value
+                                multiply = 1.5
+                            }
+                            target = scope:recipient
+                        }
+
+                        stress_impact = {
+                            greedy = medium_stress_impact_gain
+                        }
+                    }
                 }
 
                 # Stooge/Jester = 1.25 the price
@@ -293,20 +316,34 @@
                             has_court_position = stooge_camp_officer
                         }
                     }
-                    set_variable = { name = itcp_bribe_multiplier value = 1.25 }
+                    scope:actor = {
+                        pay_short_term_gold = {
+                            gold = {
+                                value = bribe_value
+                                multiply = 1.25
+                            }
+                            target = scope:recipient
+                        }
+
+                        stress_impact = {
+                            greedy = medium_stress_impact_gain
+                        }
+                    }
                 }
 
-                scope:actor = {
-                    pay_short_term_gold = {
-                        gold = {
-                            value = bribe_value
-                            multiply = scope:recipient.var:itcp_bribe_multiplier
+                else = {
+                    scope:actor = {
+                        pay_short_term_gold = {
+                            gold = {
+                                value = bribe_value
+                                multiply = 1.0
+                            }
+                            target = scope:recipient
                         }
-                        target = scope:recipient
-                    }
 
-                    stress_impact = {
-                        greedy = medium_stress_impact_gain
+                        stress_impact = {
+                            greedy = medium_stress_impact_gain
+                        }
                     }
                 }
             }
@@ -746,39 +783,6 @@
 				amenity_level = { type = court_lodging_standards value >=  medium_amenity_level }
 			}
  		}
-
-        # Treat Pavilion of the landless adventurer as having better court amenities
-        modifier = {
- 			add = {
- 				value = 0
- 				if = {
- 					limit = {
- 						scope:actor = {
-			 				domicile = { has_domicile_building = camp_main_02 }
-			 			}
- 					}
- 			 		add = 10
- 				}
- 				if = {
- 					limit = {
- 						scope:actor = {
-			 				domicile = { has_domicile_building = camp_main_03 }
-			 			}
- 					}
- 			 		add = 20
- 				}
-                if = {
- 					limit = {
- 						scope:actor = {
-			 				domicile = { has_domicile_building = camp_main_04 }
-			 			}
- 					}
- 			 		add = 30
- 				}
- 			}
-            scope:actor = { is_landless_adventurer = yes }
- 			desc = AI_COURT_LODGING_STANDARDS_QUALITY
- 		}
 		
  		modifier = {
  			add = {
@@ -859,7 +863,7 @@
 			is_courtier = no
 			is_foreign_court_or_pool_guest = no
             scope:actor = {
-                is_landless_adventurer = no
+                is_landed = yes
             }
 
 			add = 20
@@ -872,7 +876,7 @@
 			is_courtier = no
 			is_foreign_court_or_pool_guest = yes
             scope:actor = {
-                is_landless_adventurer = no
+                is_landed = yes
             }
 
 			add = 15
@@ -888,7 +892,7 @@
 			is_councillor = no
 			is_commanding_army = no
             scope:actor = {
-                is_landless_adventurer = no
+                is_landed = yes
             }
 
             add = 10
@@ -918,16 +922,43 @@
             is_courtier = yes
             has_trait = content
 
-            add = -30
+            add = -20
             desc = itcc_ai_is_content_courtier_desc
         }
 
-        # Actor is landless
-        modifier = {
-            scope:actor = { is_landless_adventurer = yes }
-            add = -10
-            desc = itcc_actor_is_landless_desc
-        }
+		# Ambitious courtier
+		modifier = {
+			has_trait = ambitious
+			liege ?= {
+				tier_difference = {
+					target = scope:actor
+					value < 0
+				}
+			}
+			scope:actor = {
+				is_landed = yes
+			}
+
+			add = 20
+			desc = itcc_ai_is_ambitious_courtier_going_up_desc
+		}
+
+		modifier = {
+			is_courtier = yes
+			has_trait = ambitious
+			liege = {
+				tier_difference = {
+					target = scope:actor
+					value > 0
+				}
+			}
+			scope:actor = {
+				is_landed = yes
+			}
+
+			add = -20
+			desc = itcc_ai_is_ambitious_courtier_going_down_desc
+		}
 
         # Actor is murderer
 		modifier = {
