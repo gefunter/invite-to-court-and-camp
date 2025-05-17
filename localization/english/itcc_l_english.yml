@@ -10,6 +10,7 @@
   itcc_poached_courtier_poached_opinion: "Betrayed me for another liege"
 
   # AI Acceptance modifiers
+  itcc_ai_is_wandering_lowborn_desc: "#V [recipient.GetFirstName]#! is a wandering [lowborn|E]: $VALUE|=+0$"
   itcc_ai_is_guest_lowborn_desc: "#V [recipient.GetFirstName]#! is a [lowborn|E] [guest|E]: $VALUE|=+0$"
   itcc_ai_is_low_courtier_lowborn_desc: "#V [recipient.GetFirstName]#! is a [lowborn|E], [low_courtier|E]: $VALUE|=+0$"
   itcc_ai_is_wandering_highborn_desc: "#V [recipient.GetFirstName]#! is a wandering [highborn|e] being invited to noble court: $VALUE|=+0$"

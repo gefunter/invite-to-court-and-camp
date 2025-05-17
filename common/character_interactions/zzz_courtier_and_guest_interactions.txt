@@ -833,13 +833,23 @@
 
         # ITCC Modifiers
 
+		## Wandering lowborn
+		modifier = {
+			is_lowborn = yes
+			is_courtier = no
+			is_foreign_court_or_pool_guest = no
+
+			add = 30
+			desc = itcc_ai_is_wandering_lowborn_desc
+		}
+
         ## Guest lowborn
 		modifier = {
 			is_lowborn = yes
 			is_courtier = no
 			is_foreign_court_or_pool_guest = yes
 
-			add = 30
+			add = 20
 			desc = itcc_ai_is_guest_lowborn_desc
 		}
 
